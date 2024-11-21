@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三菱镭射防呆系统</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1.5s ease, transform 1.5s ease;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 32px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+input[type="text"], input[type="number"], input[type="submit"], button {
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
+input[type="submit"], button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover, button:hover {
+    background-color: #0056b3;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.buttons-container button, .buttons-container input[type="submit"] {
+    width: 48%;
+}
+
+.footer {
+    text-align: center;
+    color: #888;
+    font-size: 16px;
+}
+
+/* 启动画样式 */
+#startup-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    font-size: 24px;
+    z-index: 9999;
+    padding-top: 50px; /* 上移图标 */
+}
+
+/* 炫酷的加载圈 */
+.loader {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #3498db,
+        #9b59b6,
+        #e74c3c,
+        #f1c40f,
+        #2ecc71,
+        #3498db
+    );
+    position: relative;
+    animation: rotate 1.5s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loader::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85px;
+    height: 85px;
+    background-color: #000;
+    border-radius: 50%;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 加载条容器 */
+#loading-bar-container {
+    width: 80%;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* 加载条 */
+#loading-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c, #f1c40f, #2ecc71);
+    background-size: 500% 500%;
+    animation: loadingGradient 4s ease infinite;
+}
+
+@keyframes loadingGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- 启动画屏幕 -->
+<div id="startup-screen">
+    <div class="loader"></div>
+    <div id="loading-bar-container">
+        <div id="loading-bar"></div>
+    </div>
+    <h1>系统启动中...</h1>
+</div>
+
+<div class="container">
+  <h1>三菱镭射防呆系统</h1>
+  <form id="sdlConfigForm">
+    <label for="positiveProgramNickname">正面加工程序：</label>
+    <input type="text" id="positiveProgramNickname" placeholder="请输入正面加工程序">
+
+    <label for="negativeProgramNickname">反面加工程序：</label>
+    <input type="text" id="negativeProgramNickname" placeholder="请输入反面加工程序">
+
+    <label for="workOrderParameter">程序加工条件：</label>
+    <input type="text" id="workOrderParameter" placeholder="请输入程序加工条件" required>
+
+    <label for="workOrderPlanSheets">加工计划张数：</label>
+    <input type="number" id="workOrderPlanSheets" placeholder="请输入加工计划张数" required>
+
+    <label for="workOrderId">工单管理号码：</label>
+    <input type="text" id="workOrderId" placeholder="请输入工单管理号码" required>
+
+    <div class="buttons-container">
+      <input type="submit" value="生成配方">
+      <button type="button" onclick="clearInputs()">清空所有输入</button>
+    </div>
+  </form>
+
+  <div class="footer">
+    开发者信息: 潘少岩 | 联系方式: PSY19970824@163.com
+    <br>版权所有 &copy; 2024 潘少岩所有。保留所有权利。
+  </div>
+</div>
+
+<script>
+// 模拟加载条的加载过程
+function loadProgressBar() {
+    let loadingBar = document.getElementById("loading-bar");
+    let width = 0;
+    let interval = setInterval(function() {
+        if (width >= 100) {
+            clearInterval(interval);
+            // 当加载完成后，淡出启动画面并显示内容
+            setTimeout(function() {
+                document.getElementById("startup-screen").style.display = "none";
+                document.querySelector(".container").style.opacity = 1;
+                document.querySelector(".container").style.transform = 'translateY(0)';
+            }, 500); // 等待500ms后隐藏加载屏幕并显示主内容
+        } else {
+            width++;
+            loadingBar.style.width = width + "%";
+        }
+    }, 15); // 进度条每15ms增加1%
+}
+
+// 清空所有输入的函数
+function clearInputs() {
+    document.getElementById("sdlConfigForm").reset();
+}
+
+// 在页面加载完成时，启动加载条
+document.addEventListener("DOMContentLoaded", function() {
+    loadProgressBar();
+
+    const fields = [
+        document.getElementById("positiveProgramNickname"),
+        document.getElementById("negativeProgramNickname"),
+        document.getElementById("workOrderParameter"),
+        document.getElementById("workOrderPlanSheets"),
+        document.getElementById("workOrderId")
+    ];
+
+    fields.forEach((field, index) => {
+        field.addEventListener("keydown", function(event) {
+            if (event.key === "Enter" && index < fields.length - 1) {
+                event.preventDefault(); // 防止表单提交
+                fields[index + 1].focus();
+            }
+        });
+    });
+});
+
+document.getElementById("sdlConfigForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    generateConfigFile();
+});
+
+function generateConfigFile() {
+    const positiveProgramNickname = document.getElementById("positiveProgramNickname").value;
+    const negativeProgramNickname = document.getElementById("negativeProgramNickname").value;
+    const workOrderParameter = document.getElementById("workOrderParameter").value;
+    const workOrderPlanSheets = document.getElementById("workOrderPlanSheets").value;
+    const workOrderId = document.getElementById("workOrderId").value;
+
+    if (!workOrderParameter || !workOrderPlanSheets || !workOrderId) {
+        alert("请填写程序加工条件，加工计划张数，工单管理号码！");
+        return;
+    }
+
+    const programFilePath = "C:\\PRG";
+    const parameterFilePath = "C:\\CND";
+
+    let configFileContent = "";
+
+    // 如果只输入了正面
+    if (positiveProgramNickname && !negativeProgramNickname) {
+        configFileContent += `${positiveProgramNickname},${workOrderParameter},1,${workOrderPlanSheets},0,0,0:00:00,${workOrderId},0,,\n`;
+        // 29行内容
+        for (let i = 0; i < 29; i++) {
+            configFileContent += ",,,1,0,0,0:00:00,,0,,\n";
+        }
+    }
+
+    // 如果只输入了反面
+    if (negativeProgramNickname && !positiveProgramNickname) {
+        configFileContent += `${negativeProgramNickname},${workOrderParameter},1,${workOrderPlanSheets},0,0,0:00:00,${workOrderId},1,,\n`;
+        // 29行内容
+        for (let i = 0; i < 29; i++) {
+            configFileContent += ",,,1,0,0,0:00:00,,0,,\n";
+        }
+    }
+
+    // 如果同时输入了正面和反面
+    if (positiveProgramNickname && negativeProgramNickname) {
+        configFileContent += `${positiveProgramNickname},${workOrderParameter},1,${workOrderPlanSheets},0,0,0:00:00,${workOrderId},0,,\n`;
+        configFileContent += `${negativeProgramNickname},${workOrderParameter},1,${workOrderPlanSheets},0,0,0:00:00,${workOrderId},1,,\n`;
+        // 28行内容
+        for (let i = 0; i < 28; i++) {
+            configFileContent += ",,,1,0,0,0:00:00,,0,,\n";
+        }
+    }
+
+    if (!configFileContent) {
+        alert("请至少填写正面或反面加工程序！");
+        return;
+    }
+
+    configFileContent += `${programFilePath}\n`;
+    configFileContent += `${parameterFilePath}`;
+
+    const blob = new Blob([configFileContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${workOrderId}.sdl`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+</script>
+</body>
+</html>
