@@ -536,7 +536,7 @@ function generateConfigFile() {
 
   // 若不足 30 行，用空行补足
   while (linesOutput.length < MAX_LINES) {
-    linesOutput.push(",,,1,0,0,0:00:00,,0,,,");
+    linesOutput.push(",,,1,0,0,0:00:00,,0,,");
   }
   // 若超过 30 行则截断
   if (linesOutput.length > MAX_LINES) {
