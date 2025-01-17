@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>三菱镭射防呆系统</title>
+  <style>
+  /* ===== 通用页面基础样式 & 动画 ===== */
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+  }
+  .container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 900px;
+      width: 100%;
+      opacity: 0; /* 用于加载动画后再显示 */
+      transform: translateY(50px);
+      transition: opacity 1.5s ease, transform 1.5s ease;
+  }
+  h1 {
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 32px;
+  }
+  label {
+      display: block;
+      margin-bottom: 10px;
+      color: #555;
+      font-weight: bold;
+      font-size: 18px;
+  }
+  input[type="text"],
+  input[type="number"],
+  button,
+  input[type="submit"],
+  select {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 18px;
+      box-sizing: border-box;
+  }
+  button,
+  input[type="submit"] {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  }
+  button:hover,
+  input[type="submit"]:hover {
+      background-color: #0056b3;
+  }
+  .buttons-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+  }
+  .buttons-container button,
+  .buttons-container input[type="submit"] {
+      width: 48%;
+  }
+  .footer {
+      text-align: center;
+      color: #888;
+      font-size: 16px;
+      margin-top: 20px;
+  }
+
+  /* ===== 启动画面样式 ===== */
+  #startup-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+      font-size: 24px;
+      z-index: 9999;
+      padding-top: 50px;
+  }
+  .loader {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(#3498db,#9b59b6,#e74c3c,#f1c40f,#2ecc71,#3498db);
+      position: relative;
+      animation: rotate 1.5s linear infinite;
+      margin-bottom: 20px;
+  }
+  .loader::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 85px;
+      height: 85px;
+      background-color: #000;
+      border-radius: 50%;
+  }
+  @keyframes rotate {
+      0% {
+          transform: rotate(0deg);
+      }
+      100% {
+          transform: rotate(360deg);
+      }
+  }
+  #loading-bar-container {
+      width: 80%;
+      height: 20px;
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+  }
+  #loading-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c, #f1c40f, #2ecc71);
+      background-size: 500% 500%;
+      animation: loadingGradient 4s ease infinite;
+  }
+  @keyframes loadingGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+  }
+  @keyframes fadeOut {
+      to {
+          opacity: 0;
+          visibility: hidden;
+      }
+  }
+  .hidden {
+      display: none;
+  }
+
+  /* ===== 单一、双参数模式下的输入容器 ===== */
+  /* (与之前逻辑相同) */
+  /* ===== 单行模式(可多次添加) ===== */
+  #oneLinePreview {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+  }
+  #oneLinePreview li {
+      display: flex;
+      align-items: center;         /* 垂直居中 */
+      justify-content: space-between;
+      background-color: #f9f9f9;
+      margin-bottom: 6px;
+      padding: 10px;
+      border-radius: 4px;
+  }
+
+  /* 删除按钮：上下居中，更小更窄 */
+  .small-btn {
+      font-size: 12px;
+      line-height: 1;
+      height: 24px;
+      padding: 0 6px;
+      background-color: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+  }
+  .small-btn:hover {
+      background-color: #c82333;
+  }
+  </style>
+</head>
+
+<body>
+<!-- ===== 启动画面 ===== -->
+<div id="startup-screen">
+  <div class="loader"></div>
+  <div id="loading-bar-container">
+    <div id="loading-bar"></div>
+  </div>
+  <h1>系统启动中...</h1>
+</div>
+
+<div class="container">
+  <h1>三菱镭射防呆系统</h1>
+
+  <!-- 请选择(默认), 单参数, 双参数, 自定义模式 -->
+  <label for="modeSelect">请选择加工模式：</label>
+  <select id="modeSelect">
+    <option value="" disabled selected hidden>请选择</option>
+    <option value="single">单参数模式</option>
+    <option value="dual">双参数模式</option>
+    <option value="oneLine">自定义模式</option>
+  </select>
+
+  <form id="sdlConfigForm">
+    <!-- ===== [1] 单参数模式 ===== -->
+    <div id="singleParamFields" class="hidden">
+      <label for="posProg_single">正面加工程序：</label>
+      <input type="text" id="posProg_single" placeholder="请输入正面加工程序">
+
+      <label for="negProg_single">反面加工程序：</label>
+      <input type="text" id="negProg_single" placeholder="请输入反面加工程序">
+
+      <label for="param_single">程序加工条件：</label>
+      <input type="text" id="param_single" placeholder="请输入程序加工条件">
+    </div>
+
+    <!-- ===== [2] 双参数模式 ===== -->
+    <div id="dualParamFields" class="hidden">
+      <label for="posProg_dual">正面加工程序：</label>
+      <input type="text" id="posProg_dual" placeholder="请输入正面加工程序">
+
+      <label for="posParam_dual">正面加工条件：</label>
+      <input type="text" id="posParam_dual" placeholder="请输入正面加工条件">
+
+      <label for="negProg_dual">反面加工程序：</label>
+      <input type="text" id="negProg_dual" placeholder="请输入反面加工程序">
+
+      <label for="negParam_dual">反面加工条件：</label>
+      <input type="text" id="negParam_dual" placeholder="请输入反面加工条件">
+    </div>
+
+    <!-- ===== [3] 自定义模式 ===== -->
+    <div id="oneLineFields" class="hidden">
+      <label>正面加工程序：</label>
+      <input type="text" id="oneLinePositiveProgram" placeholder="请输入正面加工程序(可选)">
+
+      <label>正面加工条件：</label>
+      <input type="text" id="oneLinePositiveParameter" placeholder="请输入正面加工条件(可选)">
+
+      <label>反面加工程序：</label>
+      <input type="text" id="oneLineNegativeProgram" placeholder="请输入反面加工程序(可选)">
+
+      <label>反面加工条件：</label>
+      <input type="text" id="oneLineNegativeParameter" placeholder="请输入反面加工条件(可选)">
+
+      <!-- “添加数据”按钮(可多次) -->
+      <button type="button" id="addOneLineBtn">添加数据</button>
+
+      <ul id="oneLinePreview"></ul>
+    </div>
+
+    <!-- ===== 公用字段 ===== -->
+    <label for="workOrderPlanSheets">加工计划张数：</label>
+    <input type="number" id="workOrderPlanSheets" placeholder="请输入加工计划张数" required>
+
+    <label for="workOrderId">工单管理号码：</label>
+    <input type="text" id="workOrderId" placeholder="请输入工单管理号码" required>
+
+    <div class="buttons-container">
+      <input type="submit" value="生成配方">
+      <button type="button" onclick="clearInputs()">清空所有输入</button>
+    </div>
+  </form>
+
+  <div class="footer">
+    <p>开发者信息: 潘少岩 | 联系方式: PSY19970824@163.com</p>
+    <p>版权所有 &copy; 2024 潘少岩所有。保留所有权利。</p>
+  </div>
+</div>
+
+<script>
+// ===== [A] 启动动画 =====
+function loadProgressBar() {
+  let loadingBar = document.getElementById("loading-bar");
+  let width = 0;
+  let interval = setInterval(() => {
+    if (width >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById("startup-screen").style.display = "none";
+        document.querySelector(".container").style.opacity = 1;
+        document.querySelector(".container").style.transform = "translateY(0)";
+      }, 500);
+    } else {
+      width++;
+      loadingBar.style.width = width + "%";
+    }
+  }, 15);
+}
+document.addEventListener("DOMContentLoaded", loadProgressBar);
+
+// ===== [B] 切换模式，显示/隐藏对应区域 =====
+const modeSelect = document.getElementById("modeSelect");
+const singleParamFields = document.getElementById("singleParamFields");
+const dualParamFields   = document.getElementById("dualParamFields");
+const oneLineFields     = document.getElementById("oneLineFields");
+
+modeSelect.addEventListener("change", () => {
+  singleParamFields.classList.add("hidden");
+  dualParamFields.classList.add("hidden");
+  oneLineFields.classList.add("hidden");
+
+  // 切换模式时，也重置自定义模式的数据(防止残留)
+  lineListOne = [];
+  document.getElementById("oneLinePreview").innerHTML = "";
+
+  if (modeSelect.value === "single") {
+    singleParamFields.classList.remove("hidden");
+  } else if (modeSelect.value === "dual") {
+    dualParamFields.classList.remove("hidden");
+  } else if (modeSelect.value === "oneLine") {
+    oneLineFields.classList.remove("hidden");
+  }
+});
+
+// ===== [C] 清空所有输入 =====
+function clearInputs() {
+  document.getElementById("sdlConfigForm").reset();
+  lineListOne = [];
+  document.getElementById("oneLinePreview").innerHTML = "";
+}
+
+// ===== [D] 自定义模式: 可多次添加行(前面带编号备注)，但不写入最终文件 =====
+let lineListOne = [];
+let remarkCounter = 1; // 用于给每行显示的编号(1#、2#等)，只在页面展示，不写入最终配方
+
+document.getElementById("addOneLineBtn").addEventListener("click", () => {
+  // 已达30行则不加
+  if (lineListOne.length >= 30) {
+    alert("最多只能添加 30 行！");
+    return;
+  }
+
+  const frontProg  = document.getElementById("oneLinePositiveProgram").value.trim();
+  const frontParam = document.getElementById("oneLinePositiveParameter").value.trim();
+  const backProg   = document.getElementById("oneLineNegativeProgram").value.trim();
+  const backParam  = document.getElementById("oneLineNegativeParameter").value.trim();
+
+  if (!frontProg && !backProg) {
+    alert("请至少填写正面或反面的一组数据再添加！");
+    return;
+  }
+
+  // 如果填写了正面
+  if (frontProg) {
+    if (lineListOne.length >= 30) {
+      alert("最多只能添加 30 行！");
+      return;
+    }
+    let remark = remarkCounter + "#";  // 形如 "1#"
+    remarkCounter++;
+    lineListOne.push({
+      remark, // 仅页面显示，不写入配方
+      program: frontProg,
+      parameter: frontParam,
+      frontOrBack: 0
+    });
+  }
+
+  // 如果填写了反面
+  if (backProg) {
+    if (lineListOne.length >= 30) {
+      alert("最多只能添加 30 行！");
+      return;
+    }
+    let remark = remarkCounter + "#";
+    remarkCounter++;
+    lineListOne.push({
+      remark,
+      program: backProg,
+      parameter: backParam,
+      frontOrBack: 1
+    });
+  }
+
+  updateOneLinePreview();
+
+  // 清空输入(可根据需求决定要不要)
+  document.getElementById("oneLinePositiveProgram").value = "";
+  document.getElementById("oneLinePositiveParameter").value = "";
+  document.getElementById("oneLineNegativeProgram").value = "";
+  document.getElementById("oneLineNegativeParameter").value = "";
+});
+
+// 刷新自定义模式列表(仅页面显示)
+function updateOneLinePreview() {
+  const previewUl = document.getElementById("oneLinePreview");
+  previewUl.innerHTML = "";
+
+  lineListOne.forEach((item, idx) => {
+    let li = document.createElement("li");
+    // 行文字: 例如 “1# 程序: AAA，条件: BBB (F/B=0)”
+    li.textContent = `${item.remark} 程序: ${item.program}，条件: ${item.parameter} (F/B=${item.frontOrBack})`;
+
+    // 删除按钮
+    let delBtn = document.createElement("button");
+    delBtn.classList.add("small-btn");
+    delBtn.textContent = "删除";
+    delBtn.addEventListener("click", () => {
+      lineListOne.splice(idx, 1);
+      updateOneLinePreview();
+    });
+
+    li.appendChild(delBtn);
+    previewUl.appendChild(li);
+  });
+}
+
+// ===== [E] 提交表单 => 生成配方文件，不包含“remark” =====
+document.getElementById("sdlConfigForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  generateConfigFile();
+});
+
+function generateConfigFile() {
+  const mode = modeSelect.value;
+  const planSheets = document.getElementById("workOrderPlanSheets").value.trim();
+  const workOrderId = document.getElementById("workOrderId").value.trim();
+
+  if (!planSheets || !workOrderId) {
+    alert("请填写加工计划张数和工单管理号码！");
+    return;
+  }
+  if (!mode) {
+    alert("请选择一个模式后再生成配方！");
+    return;
+  }
+
+  // 收集行(不带remark字段)
+  let finalLinesArr = [];
+
+  // ========== 单一参数模式 ==========
+  if (mode === "single") {
+    const posProg = document.getElementById("posProg_single").value.trim();
+    const negProg = document.getElementById("negProg_single").value.trim();
+    const param   = document.getElementById("param_single").value.trim();
+
+    if (!posProg && !negProg) {
+      alert("单参数模式下，请至少填写正面或反面程序！");
+      return;
+    }
+
+    // 若有正面
+    if (posProg) {
+      finalLinesArr.push({
+        program: posProg,
+        parameter: param,
+        frontOrBack: 0
+      });
+    }
+    // 若有反面
+    if (negProg) {
+      finalLinesArr.push({
+        program: negProg,
+        parameter: param,
+        frontOrBack: 1
+      });
+    }
+  }
+
+  // ========== 双参数模式 ==========
+  else if (mode === "dual") {
+    const posProg  = document.getElementById("posProg_dual").value.trim();
+    const posParam = document.getElementById("posParam_dual").value.trim();
+    const negProg  = document.getElementById("negProg_dual").value.trim();
+    const negParam = document.getElementById("negParam_dual").value.trim();
+
+    // 必须至少有(正面程序+正面条件) 或 (反面程序+反面条件)
+    if ((posProg && posParam) || (negProg && negParam)) {
+      // 若正面完整
+      if (posProg && posParam) {
+        finalLinesArr.push({
+          program: posProg,
+          parameter: posParam,
+          frontOrBack: 0
+        });
+      }
+      // 若反面完整
+      if (negProg && negParam) {
+        finalLinesArr.push({
+          program: negProg,
+          parameter: negParam,
+          frontOrBack: 1
+        });
+      }
+    } else {
+      alert("双参数模式下，需要至少填写(正面程序+正面条件)或(反面程序+反面条件)！");
+      return;
+    }
+  }
+
+  // ========== 自定义模式(多次添加) ==========
+  else if (mode === "oneLine") {
+    if (lineListOne.length === 0) {
+      alert("自定义模式下，你还没有添加任何行！");
+      return;
+    }
+    // 把 lineListOne 中的 remark 字段舍弃，只保留 program/parameter/frontOrBack
+    lineListOne.forEach(item => {
+      finalLinesArr.push({
+        program: item.program,
+        parameter: item.parameter,
+        frontOrBack: item.frontOrBack
+      });
+    });
+  }
+
+  // ========== 生成最终文本，每行都不含 remark ==========
+  let linesOutput = [];
+  const MAX_LINES = 30;
+
+  finalLinesArr.forEach(obj => {
+    // 格式: 
+    // program + "," + parameter + ",1," + planSheets + ",0,0,0:00:00," + workOrderId + "," + frontOrBack + ",,,"
+    // 其中 '1' 是加工次数(与之前逻辑一致)
+    let strLine = `${obj.program},${obj.parameter},1,${planSheets},0,0,0:00:00,${workOrderId},${obj.frontOrBack},,,`;
+    linesOutput.push(strLine);
+  });
+
+  // 若不足 30 行，用空行补足
+  while (linesOutput.length < MAX_LINES) {
+    linesOutput.push(",,,1,0,0,0:00:00,,0,,,");
+  }
+  // 若超过 30 行则截断
+  if (linesOutput.length > MAX_LINES) {
+    linesOutput = linesOutput.slice(0, MAX_LINES);
+  }
+
+  // 拼接 + 程序路径、参数路径
+  let configFileContent = linesOutput.join("\n") + "\n";
+  configFileContent += "C:\\PRG\n";
+  configFileContent += "C:\\CND";
+
+  // 生成下载
+  const blob = new Blob([configFileContent], { type: "text/plain" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url;
+  a.download = `${workOrderId}.sdl`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+</script>
+</body>
+</html>
