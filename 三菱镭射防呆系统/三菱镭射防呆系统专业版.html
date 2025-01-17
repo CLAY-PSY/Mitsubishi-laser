@@ -212,13 +212,13 @@
   <label for="modeSelect">选择加工模式：</label>
   <select id="modeSelect">
     <option value="" disabled selected hidden>请选择</option>
-    <option value="single">单参数模式</option>
-    <option value="dual">双参数模式</option>
+    <option value="single">单条件模式</option>
+    <option value="dual">双条件模式</option>
     <option value="oneLine">自定义模式</option>
   </select>
 
   <form id="sdlConfigForm">
-    <!-- ===== 单参数模式 ===== -->
+    <!-- ===== 单条件模式 ===== -->
     <div id="singleParamFields" class="hidden">
       <label for="posProg_single">正面加工程序：</label>
       <input type="text" id="posProg_single" placeholder="请输入正面加工程序">
@@ -230,7 +230,7 @@
       <input type="text" id="param_single" placeholder="请输入程序加工条件">
     </div>
 
-    <!-- ===== 双参数模式 ===== -->
+    <!-- ===== 双条件模式 ===== -->
     <div id="dualParamFields" class="hidden">
       <label for="posProg_dual">正面加工程序：</label>
       <input type="text" id="posProg_dual" placeholder="请输入正面加工程序">
@@ -473,14 +473,14 @@ function generateConfigFile() {
 
   let finalLinesArr = [];
 
-  // [1] 单参数模式
+  // [1] 单条件模式
   if (mode === "single") {
     const posProg = document.getElementById("posProg_single").value.trim();
     const negProg = document.getElementById("negProg_single").value.trim();
     const param   = document.getElementById("param_single").value.trim();
 
     if (!posProg && !negProg) {
-      alert("单参数模式下，请至少填写正面或反面程序！");
+      alert("单条件模式下，需要至少填写(正面程序+加工条件)或(反面程序+加工条件)！");
       return;
     }
     if (posProg) {
@@ -491,7 +491,7 @@ function generateConfigFile() {
     }
   }
 
-  // [2] 双参数
+  // [2] 双条件
   else if (mode === "dual") {
     const posProg  = document.getElementById("posProg_dual").value.trim();
     const posParam = document.getElementById("posParam_dual").value.trim();
@@ -506,7 +506,7 @@ function generateConfigFile() {
         finalLinesArr.push({ program: negProg, parameter: negParam, frontOrBack: 1 });
       }
     } else {
-      alert("双参数模式下，需要至少填写(正面程序+正面条件)或(反面程序+反面条件)！");
+      alert("双条件模式下，需要至少填写(正面程序+正面条件)或(反面程序+反面条件)！");
       return;
     }
   }
