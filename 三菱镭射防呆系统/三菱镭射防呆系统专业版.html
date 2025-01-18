@@ -109,7 +109,6 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -329,7 +328,7 @@ modeSelect.addEventListener("change", () => {
     oneLineFields.classList.remove("hidden");
   }
 
-  // 重新设置回车跳转链
+  // 重新设置回车/Tab跳转链
   setupFocusChain();
 });
 
@@ -365,10 +364,6 @@ addOneLineBtn.addEventListener("click", () => {
 
   // 如果填写了正面
   if (frontProg) {
-    if (lineListOne.length >= 30) {
-      alert("最多只能添加 30 行！");
-      return;
-    }
     lineListOne.push({
       program: frontProg,
       parameter: frontParam,
@@ -378,10 +373,6 @@ addOneLineBtn.addEventListener("click", () => {
 
   // 如果填写了反面
   if (backProg) {
-    if (lineListOne.length >= 30) {
-      alert("最多只能添加 30 行！");
-      return;
-    }
     lineListOne.push({
       program: backProg,
       parameter: backParam,
@@ -425,31 +416,20 @@ function updateOneLinePreview() {
   });
 }
 
-// ========== [E] 回车键自动跳转下一个输入 ==========
-//   需求： 
-//   1) 单条件 / 双条件模式：包含公用字段
-//   2) 自定义模式：不包含公用字段 
+// ========== [E] 回车/Tab 自动跳转下一个输入 ==========
+//   思路：若 e.key === 'Enter' 或 e.key === 'Tab' 都视作“确认”
+//        之后阻止默认，再手动聚焦下一个。
 function setupFocusChain() {
   // 清除可能重复的keydown监听
   removeAllKeydownListeners();
 
-  // 收集“单条件”文本框
-  const inputsSingle = [
-    ...document.querySelectorAll('#singleParamFields input[type="text"]')
-  ];
-
-  // 收集“双条件”文本框
-  const inputsDual = [
-    ...document.querySelectorAll('#dualParamFields input[type="text"]')
-  ];
-
-  // 收集“自定义模式”文本框
-  const inputsOneLine = [
-    ...document.querySelectorAll('#oneLineFields input[type="text"]')
-  ];
+  // 收集各模式的文本框
+  const inputsSingle   = [...document.querySelectorAll('#singleParamFields input[type="text"]')];
+  const inputsDual     = [...document.querySelectorAll('#dualParamFields   input[type="text"]')];
+  const inputsOneLine  = [...document.querySelectorAll('#oneLineFields     input[type="text"]')];
 
   // 公用字段
-  const publicFields = [
+  const publicFields   = [
     document.getElementById('workOrderPlanSheets'),
     document.getElementById('workOrderId')
   ];
@@ -457,34 +437,28 @@ function setupFocusChain() {
   let jumpInputs = [];
   const currentMode = modeSelect.value;
 
-  // 单条件模式：文本框 + 公用字段
+  // 分别拼接
   if (currentMode === 'single') {
     jumpInputs = [...inputsSingle, ...publicFields];
-  }
-  // 双条件模式：文本框 + 公用字段
-  else if (currentMode === 'dual') {
+  } else if (currentMode === 'dual') {
     jumpInputs = [...inputsDual, ...publicFields];
-  }
-  // 自定义模式：仅自定义文本框，不含公用字段
-  else if (currentMode === 'oneLine') {
-    jumpInputs = [...inputsOneLine];
+  } else if (currentMode === 'oneLine') {
+    jumpInputs = [...inputsOneLine, ...publicFields];
   }
 
-  // 给 jumpInputs 中每个输入添加回车跳转
+  // 为 jumpInputs 每个输入添加回车/Tab监听
   jumpInputs.forEach((input, idx) => {
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        // 如果不是最后一个输入，则聚焦下一个
+      // 如果是 Enter 或 Tab
+      if (e.key === 'Enter' || e.key === 'Tab') {
+        e.preventDefault(); // 阻止默认换行/Tab切换
         if (idx < jumpInputs.length - 1) {
           jumpInputs[idx + 1].focus();
         } else {
-          // 最后一个输入时，根据模式决定焦点去向
+          // 最后一个输入 -> 决定跳转按钮
           if (currentMode === 'oneLine') {
-            // 自定义模式时，最后一个跳到“添加数据”按钮
             document.getElementById("addOneLineBtn").focus();
           } else {
-            // 单/双模式，跳到“生成配方”按钮
             document.querySelector('input[type="submit"]').focus();
           }
         }
@@ -497,15 +471,14 @@ function setupFocusChain() {
 function removeAllKeydownListeners() {
   const allInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
   allInputs.forEach(inputEl => {
-    // 克隆再替换，可以移除之前所有绑定的事件
     const cloned = inputEl.cloneNode(true);
     inputEl.parentNode.replaceChild(cloned, inputEl);
   });
 }
 
-// 页面加载完成后，先执行一次（如果用户一开始就选了某模式）
+// 页面加载完成后，先执行一次
 document.addEventListener('DOMContentLoaded', () => {
-  setupFocusChain(); // 先初始化一次回车链
+  setupFocusChain();
 });
 
 // ===== [F] 生成配方(不含备注) =====
@@ -530,7 +503,7 @@ function generateConfigFile() {
 
   let finalLinesArr = [];
 
-  // [1] 单条件模式
+  // (1) 单条件模式
   if (mode === "single") {
     const posProg = document.getElementById("posProg_single").value.trim();
     const negProg = document.getElementById("negProg_single").value.trim();
@@ -548,7 +521,7 @@ function generateConfigFile() {
     }
   }
 
-  // [2] 双条件模式
+  // (2) 双条件模式
   else if (mode === "dual") {
     const posProg  = document.getElementById("posProg_dual").value.trim();
     const posParam = document.getElementById("posParam_dual").value.trim();
@@ -556,11 +529,9 @@ function generateConfigFile() {
     const negParam = document.getElementById("negParam_dual").value.trim();
 
     if ((posProg && posParam) || (negProg && negParam)) {
-      // 如果正面非空
       if (posProg && posParam) {
         finalLinesArr.push({ program: posProg, parameter: posParam, frontOrBack: 0 });
       }
-      // 如果反面非空
       if (negProg && negParam) {
         finalLinesArr.push({ program: negProg, parameter: negParam, frontOrBack: 1 });
       }
@@ -570,13 +541,13 @@ function generateConfigFile() {
     }
   }
 
-  // [3] 自定义模式
+  // (3) 自定义模式
   else if (mode === "oneLine") {
     if (lineListOne.length === 0) {
       alert("自定义模式下，你还没有添加任何数据！");
       return;
     }
-    // 注意：不含备注，写入文件的仅程序、参数、前后标志等
+    // 不含备注
     lineListOne.forEach(item => {
       finalLinesArr.push({
         program: item.program,
@@ -586,8 +557,7 @@ function generateConfigFile() {
     });
   }
 
-  // 转换为字符串，每行格式：
-  // program,parameter,1,planSheets,0,0,0:00:00,workOrderId,frontOrBack,,
+  // 格式化为SDL内容
   let linesOutput = [];
   const MAX_LINES = 30;
 
@@ -596,7 +566,7 @@ function generateConfigFile() {
     linesOutput.push(strLine);
   });
 
-  // 不足补空行，超过30行则截断
+  // 不足补空，超过30行截断
   while (linesOutput.length < MAX_LINES) {
     linesOutput.push(",,,1,0,0,0:00:00,,0,,");
   }
@@ -608,12 +578,12 @@ function generateConfigFile() {
   configFileContent += "C:\\PRG\n";
   configFileContent += "C:\\CND";
 
-  // 在浏览器里下载
+  // 下载
   const blob = new Blob([configFileContent], { type: "text/plain" });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement("a");
   a.href = url;
-  a.download = `${workOrderId}.sdl`; // 以工单号命名
+  a.download = `${workOrderId}.sdl`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
