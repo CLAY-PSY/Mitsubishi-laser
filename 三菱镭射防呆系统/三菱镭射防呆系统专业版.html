@@ -5,127 +5,138 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>三菱镭射防呆系统</title>
   <style>
-  /* ===== 通用页面样式 ===== */
-  body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background-color: #f5f5f7;
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      overflow: hidden;
-  }
-  .container {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .container {
       background-color: #ffffff;
       padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       max-width: 900px;
-      width: 100%;
-      opacity: 0; /* 用于加载动画结束后再显示 */
+      width: 90%;
+      opacity: 0;
       transform: translateY(50px);
       transition: opacity 1.5s ease, transform 1.5s ease;
-  }
-  h1 {
-      color: #333;
+      overflow: hidden;
+    }
+    h1 {
+      color: #1c1c1e;
       margin-bottom: 30px;
       text-align: center;
       font-size: 32px;
-  }
-  label {
+      font-weight: 600;
+    }
+    #startup-screen h1 {
+      color: white;
+      font-size: 24px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    label {
       display: block;
-      margin-bottom: 10px;
-      color: #555;
-      font-weight: bold;
-      font-size: 18px;
-  }
-  input[type="text"],
-  input[type="number"],
-  button,
-  input[type="submit"],
-  select {
+      margin-bottom: 8px;
+      color: #3a3a3c;
+      font-weight: 500;
+      font-size: 16px;
+    }
+    input[type="text"],
+    input[type="number"],
+    button,
+    input[type="submit"],
+    select {
       width: 100%;
-      padding: 13px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 18px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border: 1px solid #c7c7cc;
+      border-radius: 8px;
+      font-size: 16px;
       box-sizing: border-box;
-  }
-  button,
-  input[type="submit"] {
-      background-color: #007bff;
-      color: #fff;
+      background-color: #f2f2f7;
+      color: #1c1c1e;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: #0a84ff;
+      box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3);
+      outline: none;
+    }
+    button,
+    input[type="submit"] {
+      background-color: #0a84ff;
+      color: #ffffff;
       border: none;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-  }
-  button:hover,
-  input[type="submit"]:hover {
-      background-color: #0056b3;
-  }
-  .buttons-container {
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 500;
+      margin-bottom: 8px;
+      height: 50px;
+      font-size: 16px;
+    }
+    button:hover,
+    input[type="submit"]:hover {
+      background-color: #0066cc;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .buttons-container {
       display: flex;
       justify-content: space-between;
       gap: 10px;
-  }
-  .buttons-container button,
-  .buttons-container input[type="submit"] {
+      margin-bottom: 0;
+    }
+    .buttons-container button,
+    .buttons-container input[type="submit"] {
       width: 48%;
-  }
-  .footer {
-      text-align: center;
-      color: #888;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 0;
+      height: 50px;
       font-size: 16px;
-      margin-top: 20px;
-  }
+    }
+    .footer {
+      text-align: center;
+      color: #7a7a7e;
+      font-size: 14px;
+      margin-top: 10px;
+    }
 
-  /* ===== 自定义模式下的动态列表 ===== */
-  #oneLinePreview {
+    #oneLinePreview {
       list-style: none;
       padding: 0;
       margin: 0;
-  }
-  #oneLinePreview li {
+    }
+    #oneLinePreview li {
       display: flex;
-      align-items: center; /* 垂直居中 */
-      justify-content: space-between;
-      background-color: #f9f9f9;
-      margin-bottom: 6px;
-      padding: 10px;
-      border-radius: 4px;
-  }
-
-  /* 删除按钮 (小型) */
-  .small-btn {
-      font-size: 12px;
-      line-height: 1;
-      height: 24px;
-      padding: 0 6px;
-      background-color: #dc3545;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      width: auto;
-  }
-  .small-btn:hover {
-      background-color: #c82333;
-  }
+      background-color: #f2f2f7;
+      margin-bottom: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1c1c1e;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
 
-  /* ===== 启动画面样式 ===== */
-  #startup-screen {
+    #startup-screen {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #000;
+      background-color: #1c1c1e;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -134,460 +145,535 @@
       font-size: 24px;
       z-index: 9999;
       padding-top: 50px;
-  }
-  .loader {
-      width: 120px;
-      height: 120px;
+    }
+    .loader {
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      background: conic-gradient(#3498db,#9b59b6,#e74c3c,#f1c40f,#2ecc71,#3498db);
+      background: conic-gradient(#0a84ff, #ffcc00, #34c759, #ff3b30, #0a84ff);
       position: relative;
       animation: rotate 1.5s linear infinite;
       margin-bottom: 20px;
-  }
-  .loader::before {
+    }
+    .loader::before {
       content: "";
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 85px;
-      height: 85px;
-      background-color: #000;
+      width: 70px;
+      height: 70px;
+      background-color: #1c1c1e;
       border-radius: 50%;
-  }
-  @keyframes rotate {
+    }
+    @keyframes rotate {
       0% {
-          transform: rotate(0deg);
+        transform: rotate(0deg);
       }
       100% {
-          transform: rotate(360deg);
+        transform: rotate(360deg);
       }
-  }
-  #loading-bar-container {
+    }
+    #loading-bar-container {
       width: 80%;
-      height: 20px;
-      background-color: #ddd;
-      border-radius: 10px;
+      height: 14px;
+      background-color: #3a3a3c;
+      border-radius: 7px;
       overflow: hidden;
-  }
-  #loading-bar {
+      margin-bottom: 10px;
+    }
+    #loading-bar {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c, #f1c40f, #2ecc71);
+      background: linear-gradient(90deg, #0a84ff, #ffcc00, #34c759, #ff3b30, #0a84ff);
       background-size: 500% 500%;
       animation: loadingGradient 4s ease infinite;
-  }
-  @keyframes loadingGradient {
+    }
+    @keyframes loadingGradient {
       0%   { background-position: 0% 50%; }
       50%  { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
-  }
-  @keyframes fadeOut {
+    }
+    @keyframes fadeOut {
       to {
-          opacity: 0;
-          visibility: hidden;
+        opacity: 0;
+        visibility: hidden;
       }
-  }
-  .hidden {
+    }
+    .hidden {
       display: none;
-  }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #1c1c1e;
+        color: #f5f5f7;
+      }
+      .container {
+        background-color: #2c2c2e;
+        color: #f5f5f7;
+      }
+      h1 {
+        color: #f5f5f7;
+      }
+      #startup-screen h1 {
+        color: white;
+      }
+      label {
+        color: #f5f5f7;
+      }
+      input[type="text"],
+      input[type="number"],
+      button,
+      input[type="submit"],
+      select {
+        background-color: #3a3a3c;
+        color: #f5f5f7;
+        border: 1px solid #5a5a5f;
+      }
+      #oneLinePreview li {
+        background-color: #3a3a3c;
+        color: #f5f5f7;
+      }
+      .footer {
+        color: #a1a1aa;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .container {
+        width: 80%;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        width: 85%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 28px;
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      #oneLinePreview li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #34c759;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 10000;
+    }
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .notification.error {
+      background-color: #ff3b30;
+    }
+
+    @media (pointer: coarse) {
+      button {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
 
-<!-- ===== 启动画面 ===== -->
-<div id="startup-screen">
-  <div class="loader"></div>
-  <div id="loading-bar-container">
-    <div id="loading-bar"></div>
+  <div id="startup-screen">
+    <div class="loader"></div>
+    <div id="loading-bar-container">
+      <div id="loading-bar"></div>
+    </div>
+    <h1>系统启动中...</h1>
   </div>
-  <h1>系统启动中...</h1>
-</div>
 
-<div class="container">
-  <h1>三菱镭射防呆系统</h1>
+  <div id="notification" class="notification"></div>
 
-  <!-- 模式选择 -->
-  <label for="modeSelect">选择加工模式：</label>
-  <select id="modeSelect">
-    <option value="" disabled selected hidden>请选择</option>
-    <option value="single">单条件模式</option>
-    <option value="dual">双条件模式</option>
-    <option value="oneLine">自定义模式</option>
-  </select>
+  <div class="container">
+    <h1>三菱镭射防呆系统</h1>
 
-  <form id="sdlConfigForm">
-    <!-- ===== 单条件模式 ===== -->
-    <div id="singleParamFields" class="hidden">
-      <label for="posProg_single">正面加工程序：</label>
-      <input type="text" id="posProg_single" placeholder="请输入正面加工程序">
+    <label for="modeSelect">选择加工模式：</label>
+    <select id="modeSelect">
+      <option value="" disabled selected hidden>请选择</option>
+      <option value="single">单条件模式</option>
+      <option value="dual">双条件模式</option>
+      <option value="oneLine">自定义模式</option>
+    </select>
 
-      <label for="negProg_single">反面加工程序：</label>
-      <input type="text" id="negProg_single" placeholder="请输入反面加工程序">
+    <form id="sdlConfigForm">
+      <div id="singleParamFields" class="hidden">
+        <label for="posProg_single">正面加工程序：</label>
+        <input type="text" id="posProg_single" placeholder="请输入正面加工程序">
 
-      <label for="param_single">程序加工条件：</label>
-      <input type="text" id="param_single" placeholder="请输入程序加工条件">
+        <label for="negProg_single">反面加工程序：</label>
+        <input type="text" id="negProg_single" placeholder="请输入反面加工程序">
+
+        <label for="param_single">程序加工条件：</label>
+        <input type="text" id="param_single" placeholder="请输入程序加工条件">
+      </div>
+
+      <div id="dualParamFields" class="hidden">
+        <label for="posProg_dual">正面加工程序：</label>
+        <input type="text" id="posProg_dual" placeholder="请输入正面加工程序">
+
+        <label for="posParam_dual">正面加工条件：</label>
+        <input type="text" id="posParam_dual" placeholder="请输入正面加工条件">
+
+        <label for="negProg_dual">反面加工程序：</label>
+        <input type="text" id="negProg_dual" placeholder="请输入反面加工程序">
+
+        <label for="negParam_dual">反面加工条件：</label>
+        <input type="text" id="negParam_dual" placeholder="请输入反面加工条件">
+      </div>
+
+      <div id="oneLineFields" class="hidden">
+        <label>正面加工程序：</label>
+        <input type="text" id="oneLinePositiveProgram" placeholder="请输入正面加工程序(可选)">
+
+        <label>正面加工条件：</label>
+        <input type="text" id="oneLinePositiveParameter" placeholder="请输入正面加工条件(可选)">
+
+        <label>反面加工程序：</label>
+        <input type="text" id="oneLineNegativeProgram" placeholder="请输入反面加工程序(可选)">
+
+        <label>反面加工条件：</label>
+        <input type="text" id="oneLineNegativeParameter" placeholder="请输入反面加工条件(可选)">
+
+        <button type="button" id="addOneLineBtn">添加数据</button>
+        <ul id="oneLinePreview"></ul>
+      </div>
+
+      <label for="workOrderPlanSheets">加工计划张数：</label>
+      <input type="number" id="workOrderPlanSheets" placeholder="请输入加工计划张数" required>
+
+      <label for="workOrderId">工单管理号码：</label>
+      <input type="text" id="workOrderId" placeholder="请输入工单管理号码" required>
+
+      <div class="buttons-container">
+        <input type="submit" value="生成配方">
+        <button type="button" id="clearBtn">清空所有输入</button>
+      </div>
+    </form>
+
+    <div class="footer">
+      <p>
+        开发者信息: 潘少岩 | 联系方式: PSY19970824@163.com
+        <br>
+        版权所有 &copy; 2024 潘少岩所有。保留所有权利。
+      </p>
     </div>
-
-    <!-- ===== 双条件模式 ===== -->
-    <div id="dualParamFields" class="hidden">
-      <label for="posProg_dual">正面加工程序：</label>
-      <input type="text" id="posProg_dual" placeholder="请输入正面加工程序">
-
-      <label for="posParam_dual">正面加工条件：</label>
-      <input type="text" id="posParam_dual" placeholder="请输入正面加工条件">
-
-      <label for="negProg_dual">反面加工程序：</label>
-      <input type="text" id="negProg_dual" placeholder="请输入反面加工程序">
-
-      <label for="negParam_dual">反面加工条件：</label>
-      <input type="text" id="negParam_dual" placeholder="请输入反面加工条件">
-    </div>
-
-    <!-- ===== 自定义模式(可多次添加 + 删除) ===== -->
-    <div id="oneLineFields" class="hidden">
-      <label>正面加工程序：</label>
-      <input type="text" id="oneLinePositiveProgram" placeholder="请输入正面加工程序(可选)">
-
-      <label>正面加工条件：</label>
-      <input type="text" id="oneLinePositiveParameter" placeholder="请输入正面加工条件(可选)">
-
-      <label>反面加工程序：</label>
-      <input type="text" id="oneLineNegativeProgram" placeholder="请输入反面加工程序(可选)">
-
-      <label>反面加工条件：</label>
-      <input type="text" id="oneLineNegativeParameter" placeholder="请输入反面加工条件(可选)">
-
-      <button type="button" id="addOneLineBtn">添加数据</button>
-      <ul id="oneLinePreview"></ul>
-    </div>
-
-    <!-- ===== 公用字段 ===== -->
-    <label for="workOrderPlanSheets">加工计划张数：</label>
-    <input type="number" id="workOrderPlanSheets" placeholder="请输入加工计划张数" required>
-
-    <label for="workOrderId">工单管理号码：</label>
-    <input type="text" id="workOrderId" placeholder="请输入工单管理号码" required>
-
-    <div class="buttons-container">
-      <input type="submit" value="生成配方">
-      <button type="button" onclick="clearInputs()">清空所有输入</button>
-    </div>
-  </form>
-
-  <div class="footer">
-    <p>
-    开发者信息: 潘少岩 | 联系方式: PSY19970824@163.com
-    <br>
-    版权所有 &copy; 2024 潘少岩所有。保留所有权利。
-    </p>
   </div>
-</div>
 
-<script>
-// ===== [A] 启动动画相关 =====
-function loadProgressBar() {
-  let loadingBar = document.getElementById("loading-bar");
-  let width = 0;
-  let interval = setInterval(() => {
-    if (width >= 100) {
-      clearInterval(interval);
-      setTimeout(() => {
-        document.getElementById("startup-screen").style.display = "none";
-        document.querySelector(".container").style.opacity = 1;
-        document.querySelector(".container").style.transform = "translateY(0)";
-      }, 500);
-    } else {
-      width++;
-      loadingBar.style.width = width + "%";
-    }
-  }, 15);
-}
-document.addEventListener("DOMContentLoaded", loadProgressBar);
-
-// ===== [B] 切换模式(显示/隐藏对应输入项) =====
-const modeSelect = document.getElementById("modeSelect");
-const singleParamFields = document.getElementById("singleParamFields");
-const dualParamFields   = document.getElementById("dualParamFields");
-const oneLineFields     = document.getElementById("oneLineFields");
-
-modeSelect.addEventListener("change", () => {
-  singleParamFields.classList.add("hidden");
-  dualParamFields.classList.add("hidden");
-  oneLineFields.classList.add("hidden");
-
-  // 切换模式时，重置自定义模式数组+预览
-  lineListOne = [];
-  document.getElementById("oneLinePreview").innerHTML = "";
-
-  if (modeSelect.value === "single") {
-    singleParamFields.classList.remove("hidden");
-  } else if (modeSelect.value === "dual") {
-    dualParamFields.classList.remove("hidden");
-  } else if (modeSelect.value === "oneLine") {
-    oneLineFields.classList.remove("hidden");
-  }
-
-  // 重新设置回车/Tab跳转链
-  setupFocusChain();
-});
-
-// ===== [C] 清空所有输入 =====
-function clearInputs() {
-  document.getElementById("sdlConfigForm").reset();
-  lineListOne = [];
-  document.getElementById("oneLinePreview").innerHTML = "";
-}
-
-// ===== [D] 自定义模式: 多次添加行+删除(备注不写入文件) =====
-let lineListOne = [];
-
-const addOneLineBtn = document.getElementById("addOneLineBtn");
-const oneLinePreview = document.getElementById("oneLinePreview");
-
-addOneLineBtn.addEventListener("click", () => {
-  if (lineListOne.length >= 30) {
-    alert("最多只能添加 30 行数据！");
-    return;
-  }
-
-  const frontProg  = document.getElementById("oneLinePositiveProgram").value.trim();
-  const frontParam = document.getElementById("oneLinePositiveParameter").value.trim();
-  const backProg   = document.getElementById("oneLineNegativeProgram").value.trim();
-  const backParam  = document.getElementById("oneLineNegativeParameter").value.trim();
-
-  // 要求至少有一组正面或反面
-  if (!frontProg && !backProg) {
-    alert("请至少填写正面或反面的一组数据再添加！");
-    return;
-  }
-
-  // 如果填写了正面
-  if (frontProg) {
-    lineListOne.push({
-      program: frontProg,
-      parameter: frontParam,
-      frontOrBack: 0
-    });
-  }
-
-  // 如果填写了反面
-  if (backProg) {
-    lineListOne.push({
-      program: backProg,
-      parameter: backParam,
-      frontOrBack: 1
-    });
-  }
-
-  // 更新预览
-  updateOneLinePreview();
-
-  // 清空(可选)
-  document.getElementById("oneLinePositiveProgram").value = "";
-  document.getElementById("oneLinePositiveParameter").value = "";
-  document.getElementById("oneLineNegativeProgram").value = "";
-  document.getElementById("oneLineNegativeParameter").value = "";
-});
-
-function updateOneLinePreview() {
-  oneLinePreview.innerHTML = ""; // 清空列表
-
-  lineListOne.forEach((item, idx) => {
-    // 备注序号自动 = 索引+1
-    let remarkText = `${idx + 1}#`;
-
-    let li = document.createElement("li");
-    li.textContent = `${remarkText} 程序: ${item.program}，条件: ${item.parameter} (F/B=${item.frontOrBack})`;
-
-    // 创建删除按钮
-    let delBtn = document.createElement("button");
-    delBtn.classList.add("small-btn");
-    delBtn.textContent = "删除";
-    delBtn.addEventListener("click", () => {
-      // 删除对应元素
-      lineListOne.splice(idx, 1);
-      // 重新渲染列表(备注顺序会自动更新)
-      updateOneLinePreview();
-    });
-
-    li.appendChild(delBtn);
-    oneLinePreview.appendChild(li);
-  });
-}
-
-// ========== [E] 回车/Tab 自动跳转下一个输入 ==========
-//   思路：若 e.key === 'Enter' 或 e.key === 'Tab' 都视作“确认”
-//        之后阻止默认，再手动聚焦下一个。
-function setupFocusChain() {
-  // 清除可能重复的keydown监听
-  removeAllKeydownListeners();
-
-  // 收集各模式的文本框
-  const inputsSingle   = [...document.querySelectorAll('#singleParamFields input[type="text"]')];
-  const inputsDual     = [...document.querySelectorAll('#dualParamFields   input[type="text"]')];
-  const inputsOneLine  = [...document.querySelectorAll('#oneLineFields     input[type="text"]')];
-
-  // 公用字段
-  const publicFields   = [
-    document.getElementById('workOrderPlanSheets'),
-    document.getElementById('workOrderId')
-  ];
-
-  let jumpInputs = [];
-  const currentMode = modeSelect.value;
-
-  // 分别拼接
-  if (currentMode === 'single') {
-    jumpInputs = [...inputsSingle, ...publicFields];
-  } else if (currentMode === 'dual') {
-    jumpInputs = [...inputsDual, ...publicFields];
-  } else if (currentMode === 'oneLine') {
-    jumpInputs = [...inputsOneLine, ...publicFields];
-  }
-
-  // 为 jumpInputs 每个输入添加回车/Tab监听
-  jumpInputs.forEach((input, idx) => {
-    input.addEventListener('keydown', (e) => {
-      // 如果是 Enter 或 Tab
-      if (e.key === 'Enter' || e.key === 'Tab') {
-        e.preventDefault(); // 阻止默认换行/Tab切换
-        if (idx < jumpInputs.length - 1) {
-          jumpInputs[idx + 1].focus();
+  <script>
+    function loadProgressBar() {
+      let loadingBar = document.getElementById("loading-bar");
+      let width = 0;
+      let interval = setInterval(() => {
+        if (width >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            document.getElementById("startup-screen").style.display = "none";
+            document.querySelector(".container").style.opacity = 1;
+            document.querySelector(".container").style.transform = "translateY(0)";
+            document.body.style.overflow = 'auto';
+          }, 500);
         } else {
-          // 最后一个输入 -> 决定跳转按钮
-          if (currentMode === 'oneLine') {
-            document.getElementById("addOneLineBtn").focus();
-          } else {
-            document.querySelector('input[type="submit"]').focus();
+          width++;
+          loadingBar.style.width = width + "%";
+        }
+      }, 15);
+    }
+    document.addEventListener("DOMContentLoaded", loadProgressBar);
+
+    const modeSelect = document.getElementById("modeSelect");
+    const singleParamFields = document.getElementById("singleParamFields");
+    const dualParamFields   = document.getElementById("dualParamFields");
+    const oneLineFields     = document.getElementById("oneLineFields");
+
+    modeSelect.addEventListener("change", () => {
+      singleParamFields.classList.add("hidden");
+      dualParamFields.classList.add("hidden");
+      oneLineFields.classList.add("hidden");
+
+      lineListOne = [];
+      document.getElementById("oneLinePreview").innerHTML = "";
+
+      if (modeSelect.value === "single") {
+        singleParamFields.classList.remove("hidden");
+      } else if (modeSelect.value === "dual") {
+        dualParamFields.classList.remove("hidden");
+      } else if (modeSelect.value === "oneLine") {
+        oneLineFields.classList.remove("hidden");
+      }
+
+      setupFocusChain();
+    });
+
+    const clearBtn = document.getElementById("clearBtn");
+    clearBtn.addEventListener("click", clearInputs);
+
+    function clearInputs() {
+      document.getElementById("sdlConfigForm").reset();
+      lineListOne = [];
+      document.getElementById("oneLinePreview").innerHTML = "";
+      showNotification("所有输入已清空。", "success");
+    }
+
+    let lineListOne = [];
+
+    const addOneLineBtn = document.getElementById("addOneLineBtn");
+    const oneLinePreview = document.getElementById("oneLinePreview");
+    const notification = document.getElementById("notification");
+
+    addOneLineBtn.addEventListener("click", () => {
+      if (lineListOne.length >= 30) {
+        showNotification("最多只能添加 30 行数据！", "error");
+        return;
+      }
+
+      const frontProg  = document.getElementById("oneLinePositiveProgram").value.trim();
+      const frontParam = document.getElementById("oneLinePositiveParameter").value.trim();
+      const backProg   = document.getElementById("oneLineNegativeProgram").value.trim();
+      const backParam  = document.getElementById("oneLineNegativeParameter").value.trim();
+
+      if (!frontProg && !backProg) {
+        showNotification("请至少填写正面或反面的一组数据再添加！", "error");
+        return;
+      }
+
+      if (frontProg && frontProg.length > 0) {
+        lineListOne.push({
+          program: frontProg,
+          parameter: frontParam,
+          frontOrBack: 0
+        });
+      }
+
+      if (backProg && backProg.length > 0) {
+        lineListOne.push({
+          program: backProg,
+          parameter: backParam,
+          frontOrBack: 1
+        });
+      }
+
+      updateOneLinePreview();
+
+      document.getElementById("oneLinePositiveProgram").value = "";
+      document.getElementById("oneLinePositiveParameter").value = "";
+      document.getElementById("oneLineNegativeProgram").value = "";
+      document.getElementById("oneLineNegativeParameter").value = "";
+
+      showNotification("数据添加成功。", "success");
+    });
+
+    function updateOneLinePreview() {
+      oneLinePreview.innerHTML = "";
+
+      lineListOne.forEach((item, idx) => {
+        let remarkText = `${idx + 1}#`;
+
+        let li = document.createElement("li");
+
+        let textSpan = document.createElement("span");
+        textSpan.classList.add("item-text");
+        textSpan.textContent = `${remarkText} 程序: ${item.program}，条件: ${item.parameter} (F/B=${item.frontOrBack})`;
+
+        li.appendChild(textSpan);
+        oneLinePreview.appendChild(li);
+      });
+    }
+
+    function setupFocusChain() {
+      removeAllKeydownListeners();
+
+      const inputsSingle   = [...document.querySelectorAll('#singleParamFields input[type="text"]')];
+      const inputsDual     = [...document.querySelectorAll('#dualParamFields   input[type="text"]')];
+      const inputsOneLine  = [...document.querySelectorAll('#oneLineFields     input[type="text"]')];
+
+      const publicFields   = [
+        document.getElementById('workOrderPlanSheets'),
+        document.getElementById('workOrderId')
+      ];
+
+      let jumpInputs = [];
+      const currentMode = modeSelect.value;
+
+      if (currentMode === 'single') {
+        jumpInputs = [...inputsSingle, ...publicFields];
+      } else if (currentMode === 'dual') {
+        jumpInputs = [...inputsDual, ...publicFields];
+      } else if (currentMode === 'oneLine') {
+        jumpInputs = [...inputsOneLine, ...publicFields];
+      }
+
+      jumpInputs.forEach((input, idx) => {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === 'Tab') {
+            e.preventDefault();
+            if (idx < jumpInputs.length - 1) {
+              jumpInputs[idx + 1].focus();
+            } else {
+              document.querySelector('input[type="submit"]').focus();
+            }
           }
+        });
+      });
+    }
+
+    function removeAllKeydownListeners() {
+      const allInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+      allInputs.forEach(inputEl => {
+        const cloned = inputEl.cloneNode(true);
+        inputEl.parentNode.replaceChild(cloned, inputEl);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setupFocusChain();
+    });
+
+    const sdlConfigForm = document.getElementById("sdlConfigForm");
+    sdlConfigForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      generateConfigFile();
+    });
+
+    function generateConfigFile() {
+      const mode = modeSelect.value;
+      const planSheets = document.getElementById("workOrderPlanSheets").value.trim();
+      const workOrderId = document.getElementById("workOrderId").value.trim();
+
+      if (!planSheets || !workOrderId) {
+        showNotification("请填写加工计划张数和工单管理号码！", "error");
+        return;
+      }
+      if (!mode) {
+        showNotification("请选择一个模式后再生成配方！", "error");
+        return;
+      }
+
+      let finalLinesArr = [];
+      const MAX_LINES = 30;
+
+      if (mode === "single") {
+        const posProg = document.getElementById("posProg_single").value.trim();
+        const negProg = document.getElementById("negProg_single").value.trim();
+        const param   = document.getElementById("param_single").value.trim();
+
+        if (!posProg && !negProg) {
+          showNotification("单条件模式下，需要至少填写(正面程序+加工条件)或(反面程序+加工条件)！", "error");
+          return;
+        }
+        if (posProg) {
+          finalLinesArr.push({ program: posProg, parameter: param, frontOrBack: 0 });
+        }
+        if (negProg) {
+          finalLinesArr.push({ program: negProg, parameter: param, frontOrBack: 1 });
         }
       }
-    });
-  });
-}
+      else if (mode === "dual") {
+        const posProg  = document.getElementById("posProg_dual").value.trim();
+        const posParam = document.getElementById("posParam_dual").value.trim();
+        const negProg  = document.getElementById("negProg_dual").value.trim();
+        const negParam = document.getElementById("negParam_dual").value.trim();
 
-// 辅助函数：移除页面上所有输入框已有的keydown监听，避免重复叠加
-function removeAllKeydownListeners() {
-  const allInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
-  allInputs.forEach(inputEl => {
-    const cloned = inputEl.cloneNode(true);
-    inputEl.parentNode.replaceChild(cloned, inputEl);
-  });
-}
-
-// 页面加载完成后，先执行一次
-document.addEventListener('DOMContentLoaded', () => {
-  setupFocusChain();
-});
-
-// ===== [F] 生成配方(不含备注) =====
-document.getElementById("sdlConfigForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  generateConfigFile();
-});
-
-function generateConfigFile() {
-  const mode = modeSelect.value;
-  const planSheets = document.getElementById("workOrderPlanSheets").value.trim();
-  const workOrderId = document.getElementById("workOrderId").value.trim();
-
-  if (!planSheets || !workOrderId) {
-    alert("请填写加工计划张数和工单管理号码！");
-    return;
-  }
-  if (!mode) {
-    alert("请选择一个模式后再生成配方！");
-    return;
-  }
-
-  let finalLinesArr = [];
-
-  // (1) 单条件模式
-  if (mode === "single") {
-    const posProg = document.getElementById("posProg_single").value.trim();
-    const negProg = document.getElementById("negProg_single").value.trim();
-    const param   = document.getElementById("param_single").value.trim();
-
-    if (!posProg && !negProg) {
-      alert("单条件模式下，需要至少填写(正面程序+加工条件)或(反面程序+加工条件)！");
-      return;
-    }
-    if (posProg) {
-      finalLinesArr.push({ program: posProg, parameter: param, frontOrBack: 0 });
-    }
-    if (negProg) {
-      finalLinesArr.push({ program: negProg, parameter: param, frontOrBack: 1 });
-    }
-  }
-
-  // (2) 双条件模式
-  else if (mode === "dual") {
-    const posProg  = document.getElementById("posProg_dual").value.trim();
-    const posParam = document.getElementById("posParam_dual").value.trim();
-    const negProg  = document.getElementById("negProg_dual").value.trim();
-    const negParam = document.getElementById("negParam_dual").value.trim();
-
-    if ((posProg && posParam) || (negProg && negParam)) {
-      if (posProg && posParam) {
-        finalLinesArr.push({ program: posProg, parameter: posParam, frontOrBack: 0 });
+        if ((posProg && posParam) || (negProg && negParam)) {
+          if (posProg && posParam) {
+            finalLinesArr.push({ program: posProg, parameter: posParam, frontOrBack: 0 });
+          }
+          if (negProg && negParam) {
+            finalLinesArr.push({ program: negProg, parameter: negParam, frontOrBack: 1 });
+          }
+        } else {
+          showNotification("双条件模式下，需要至少填写(正面程序+正面条件)或(反面程序+反面条件)！", "error");
+          return;
+        }
       }
-      if (negProg && negParam) {
-        finalLinesArr.push({ program: negProg, parameter: negParam, frontOrBack: 1 });
+      else if (mode === "oneLine") {
+        if (lineListOne.length === 0) {
+          showNotification("自定义模式下，你还没有添加任何数据！", "error");
+          return;
+        }
+        lineListOne.forEach(item => {
+          finalLinesArr.push({
+            program: item.program,
+            parameter: item.parameter,
+            frontOrBack: item.frontOrBack
+          });
+        });
       }
-    } else {
-      alert("双条件模式下，需要至少填写(正面程序+正面条件)或(反面程序+反面条件)！");
-      return;
-    }
-  }
 
-  // (3) 自定义模式
-  else if (mode === "oneLine") {
-    if (lineListOne.length === 0) {
-      alert("自定义模式下，你还没有添加任何数据！");
-      return;
-    }
-    // 不含备注
-    lineListOne.forEach(item => {
-      finalLinesArr.push({
-        program: item.program,
-        parameter: item.parameter,
-        frontOrBack: item.frontOrBack
+      let linesOutput = [];
+
+      finalLinesArr.forEach(obj => {
+        let strLine = `${obj.program},${obj.parameter},1,${planSheets},0,0,0:00:00,${workOrderId},${obj.frontOrBack},,`;
+        linesOutput.push(strLine);
       });
-    });
-  }
 
-  // 格式化为SDL内容
-  let linesOutput = [];
-  const MAX_LINES = 30;
+      while (linesOutput.length < MAX_LINES) {
+        linesOutput.push(",,,1,0,0,0:00:00,,0,,");
+      }
+      if (linesOutput.length > MAX_LINES) {
+        linesOutput = linesOutput.slice(0, MAX_LINES);
+      }
 
-  finalLinesArr.forEach(obj => {
-    let strLine = `${obj.program},${obj.parameter},1,${planSheets},0,0,0:00:00,${workOrderId},${obj.frontOrBack},,`;
-    linesOutput.push(strLine);
-  });
+      let configFileContent = linesOutput.join("\n") + "\n";
+      configFileContent += "C:\\PRG\n";
+      configFileContent += "C:\\CND";
 
-  // 不足补空，超过30行截断
-  while (linesOutput.length < MAX_LINES) {
-    linesOutput.push(",,,1,0,0,0:00:00,,0,,");
-  }
-  if (linesOutput.length > MAX_LINES) {
-    linesOutput = linesOutput.slice(0, MAX_LINES);
-  }
+      const blob = new Blob([configFileContent], { type: "text/plain" });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href = url;
+      a.download = `${workOrderId}.sdl`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
-  let configFileContent = linesOutput.join("\n") + "\n";
-  configFileContent += "C:\\PRG\n";
-  configFileContent += "C:\\CND";
+      showNotification("配方文件已生成并下载。", "success");
+    }
 
-  // 下载
-  const blob = new Blob([configFileContent], { type: "text/plain" });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement("a");
-  a.href = url;
-  a.download = `${workOrderId}.sdl`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-</script>
+    function showNotification(message, type) {
+      const notification = document.getElementById("notification");
+      notification.textContent = message;
+      if (type === "success") {
+        notification.classList.remove("error");
+        notification.classList.add("show");
+      } else if (type === "error") {
+        notification.classList.add("error");
+        notification.classList.add("show");
+      }
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 3000);
+    }
+  </script>
 </body>
 </html>
