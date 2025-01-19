@@ -365,7 +365,7 @@
         <label>反面加工条件：</label>
         <input type="text" id="oneLineNegativeParameter" placeholder="请输入反面加工条件(可选)">
 
-        <button type="button" id="addOneLineBtn">添加数据</button>
+        <button type="button" id="addOneLineBtn">添加数据（最多只能添加30组数据）</button>
         <ul id="oneLinePreview"></ul>
       </div>
 
@@ -453,7 +453,7 @@
 
     addOneLineBtn.addEventListener("click", () => {
       if (lineListOne.length >= 30) {
-        showNotification("最多只能添加 30 行数据！", "error");
+        showNotification("最多只能添加 30 组数据！", "error");
         return;
       }
 
