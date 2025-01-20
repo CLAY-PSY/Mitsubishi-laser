@@ -370,7 +370,8 @@
       <input type="text" id="workOrderId" placeholder="请输入工单管理号码" required>
 
       <div class="buttons-container">
-        <input type="submit" value="生成配方">
+        <!-- 将提交按钮类型从 submit 改为 button -->
+        <button type="button" id="generateBtn">生成配方</button>
         <button type="button" id="clearBtn">清空所有输入</button>
       </div>
     </form>
@@ -417,8 +418,6 @@
       } else if (modeSelect.value === "oneLine") {
         oneLineFields.classList.remove("hidden");
       }
-
-      setupFocusChain();
     });
 
     const clearBtn = document.getElementById("clearBtn");
@@ -496,60 +495,18 @@
       });
     }
 
-    function setupFocusChain() {
-      removeAllKeydownListeners();
-
-      const inputsSingle   = [...document.querySelectorAll('#singleParamFields input[type="text"]')];
-      const inputsDual     = [...document.querySelectorAll('#dualParamFields   input[type="text"]')];
-      const inputsOneLine  = [...document.querySelectorAll('#oneLineFields     input[type="text"]')];
-
-      const publicFields   = [
-        document.getElementById('workOrderPlanSheets'),
-        document.getElementById('workOrderId')
-      ];
-
-      let jumpInputs = [];
-      const currentMode = modeSelect.value;
-
-      if (currentMode === 'single') {
-        jumpInputs = [...inputsSingle, ...publicFields];
-      } else if (currentMode === 'dual') {
-        jumpInputs = [...inputsDual, ...publicFields];
-      } else if (currentMode === 'oneLine') {
-        jumpInputs = [...inputsOneLine, ...publicFields];
-      }
-
-      jumpInputs.forEach((input, idx) => {
-        input.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === 'Tab') {
-            e.preventDefault();
-            if (idx < jumpInputs.length - 1) {
-              jumpInputs[idx + 1].focus();
-            } else {
-              document.querySelector('input[type="submit"]').focus();
-            }
-          }
-        });
-      });
-    }
-
-    function removeAllKeydownListeners() {
-      const allInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
-      allInputs.forEach(inputEl => {
-        const cloned = inputEl.cloneNode(true);
-        inputEl.parentNode.replaceChild(cloned, inputEl);
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      setupFocusChain();
-    });
-
+    // 移除表单的 submit 事件监听器
+    /*
     const sdlConfigForm = document.getElementById("sdlConfigForm");
     sdlConfigForm.addEventListener("submit", function(e) {
       e.preventDefault();
       generateConfigFile();
     });
+    */
+
+    // 添加“生成配方”按钮的 click 事件监听器
+    const generateBtn = document.getElementById("generateBtn");
+    generateBtn.addEventListener("click", generateConfigFile);
 
     function generateConfigFile() {
       const mode = modeSelect.value;
