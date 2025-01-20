@@ -370,7 +370,6 @@
       <input type="text" id="workOrderId" placeholder="请输入工单管理号码" required>
 
       <div class="buttons-container">
-        <!-- 将提交按钮类型从 submit 改为 button -->
         <button type="button" id="generateBtn">生成配方</button>
         <button type="button" id="clearBtn">清空所有输入</button>
       </div>
@@ -495,16 +494,6 @@
       });
     }
 
-    // 移除表单的 submit 事件监听器
-    /*
-    const sdlConfigForm = document.getElementById("sdlConfigForm");
-    sdlConfigForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      generateConfigFile();
-    });
-    */
-
-    // 添加“生成配方”按钮的 click 事件监听器
     const generateBtn = document.getElementById("generateBtn");
     generateBtn.addEventListener("click", generateConfigFile);
 
